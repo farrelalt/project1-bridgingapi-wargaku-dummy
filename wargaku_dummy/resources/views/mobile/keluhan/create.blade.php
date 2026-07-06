@@ -6,6 +6,11 @@
 </head>
 <body>
     <div class="app-shell">
+        <div class="gov-strip">
+            <span class="dot"></span>
+            Pemerintah Kota Surabaya &middot; Dinas Komunikasi dan Informatika
+        </div>
+
         <div class="navbar">
             <div class="nav-brand">
                 <div class="brand-logo">W</div>
@@ -15,10 +20,16 @@
                 </div>
             </div>
 
-            <a href="{{ route('keluhan.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
         </div>
 
         <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <span>/</span>
+                <span class="current">Buat Keluhan</span>
+            </div>
+
             <div class="page-card">
                 <div class="page-header">
                     <div>
@@ -52,6 +63,8 @@
                             <label>Isi Keluhan</label>
                             <textarea name="konten" placeholder="Tuliskan detail keluhan..." required></textarea>
                         </div>
+
+                        <div class="form-section-label">Klasifikasi</div>
 
                         <div class="form-group">
                             <label>Kategori</label>
@@ -88,6 +101,8 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-section-label">Lokasi</div>
 
                         <div class="form-group">
                             <label>Latitude</label>

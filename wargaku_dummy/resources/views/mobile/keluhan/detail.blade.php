@@ -6,6 +6,11 @@
 </head>
 <body>
     <div class="app-shell">
+        <div class="gov-strip">
+            <span class="dot"></span>
+            Pemerintah Kota Surabaya &middot; Dinas Komunikasi dan Informatika
+        </div>
+
         <div class="navbar">
             <div class="nav-brand">
                 <div class="brand-logo">W</div>
@@ -19,6 +24,14 @@
         </div>
 
         <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <span>/</span>
+                <a href="{{ route('keluhan.index') }}">Daftar Keluhan</a>
+                <span>/</span>
+                <span class="current">Detail</span>
+            </div>
+
             <div class="page-card">
                 <div class="page-header">
                     <div>
@@ -28,6 +41,17 @@
                 </div>
 
                 @if($keluhan)
+                    @php
+                        $statusRaw = strtolower($keluhan['status'] ?? '-');
+                        $statusClass = match(true) {
+                            str_contains($statusRaw, 'selesai') => 'status-selesai',
+                            str_contains($statusRaw, 'proses') => 'status-proses',
+                            str_contains($statusRaw, 'tunda') => 'status-tunda',
+                            str_contains($statusRaw, 'tolak') => 'status-ditolak',
+                            default => '',
+                        };
+                    @endphp
+
                     <div class="detail-row">
                         <div class="detail-label">Judul</div>
                         <div class="detail-value">{{ $keluhan['judul'] ?? '-' }}</div>
@@ -41,7 +65,7 @@
                     <div class="detail-row">
                         <div class="detail-label">Status</div>
                         <div class="detail-value">
-                            <span class="status-badge">{{ $keluhan['status'] ?? '-' }}</span>
+                            <span class="status-badge {{ $statusClass }}">{{ $keluhan['status'] ?? '-' }}</span>
                         </div>
                     </div>
 

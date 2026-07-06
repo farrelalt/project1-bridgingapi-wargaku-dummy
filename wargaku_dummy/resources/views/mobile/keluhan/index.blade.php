@@ -3,58 +3,14 @@
 <head>
     <title>Daftar Keluhan</title>
     <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
-
-    <style>
-        .keluhan-list {
-            display: grid;
-            gap: 16px;
-        }
-
-        .keluhan-card {
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 18px;
-            background: #ffffff;
-            transition: 0.2s ease;
-        }
-
-        .keluhan-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-        }
-
-        .keluhan-title {
-            margin: 0 0 8px;
-            color: var(--primary-dark);
-            font-size: 18px;
-        }
-
-        .keluhan-meta {
-            color: var(--muted);
-            font-size: 14px;
-            margin-bottom: 14px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 42px 20px;
-            background: var(--primary-soft);
-            border-radius: 20px;
-            color: var(--primary-dark);
-        }
-
-        .empty-state h3 {
-            margin: 0 0 8px;
-        }
-
-        .empty-state p {
-            margin: 0 0 18px;
-            color: var(--muted);
-        }
-    </style>
 </head>
 <body>
     <div class="app-shell">
+        <div class="gov-strip">
+            <span class="dot"></span>
+            Pemerintah Kota Surabaya &middot; Dinas Komunikasi dan Informatika
+        </div>
+
         <div class="navbar">
             <div class="nav-brand">
                 <div class="brand-logo">W</div>
@@ -68,6 +24,12 @@
         </div>
 
         <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <span>/</span>
+                <span class="current">Daftar Keluhan</span>
+            </div>
+
             <div class="page-card">
                 <div class="page-header">
                     <div>
@@ -91,21 +53,29 @@
                 @if(count($keluhan) > 0)
                     <div class="keluhan-list">
                         @foreach($keluhan as $item)
-                            <div class="keluhan-card">
-                                <h3 class="keluhan-title">
-                                    {{ $item['judul'] ?? 'Tanpa Judul' }}
-                                </h3>
-
-                                <div class="keluhan-meta">
-                                    Status:
-                                    <span class="status-badge">
+                            @php
+                                $statusRaw = strtolower($item['status'] ?? '-');
+                                $statusClass = match(true) {
+                                    str_contains($statusRaw, 'selesai') => 'status-selesai',
+                                    str_contains($statusRaw, 'proses') => 'status-proses',
+                                    str_contains($statusRaw, 'tunda') => 'status-tunda',
+                                    str_contains($statusRaw, 'tolak') => 'status-ditolak',
+                                    default => '',
+                                };
+                            @endphp
+                            <div class="keluhan-card {{ $statusClass }}">
+                                <div class="keluhan-card-top">
+                                    <h3 class="keluhan-title">
+                                        {{ $item['judul'] ?? 'Tanpa Judul' }}
+                                    </h3>
+                                    <span class="status-badge {{ $statusClass }}">
                                         {{ $item['status'] ?? '-' }}
                                     </span>
                                 </div>
 
                                 @if(isset($item['alamat']))
                                     <div class="keluhan-meta">
-                                        Lokasi: {{ $item['alamat'] }}
+                                        {{ $item['alamat'] }}
                                     </div>
                                 @endif
 
@@ -119,6 +89,7 @@
                     </div>
                 @else
                     <div class="empty-state">
+                        <div class="empty-state-icon">&#128203;</div>
                         <h3>Belum Ada Keluhan</h3>
                         <p>Data keluhan belum tersedia. Buat keluhan baru untuk mencoba alur simulasi Wargaku.</p>
 

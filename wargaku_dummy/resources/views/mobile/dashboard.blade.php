@@ -6,6 +6,11 @@
 </head>
 <body>
     <div class="app-shell">
+        <div class="gov-strip">
+            <span class="dot"></span>
+            Pemerintah Kota Surabaya &middot; Dinas Komunikasi dan Informatika
+        </div>
+
         <div class="navbar">
             <div class="nav-brand">
                 <div class="brand-logo">W</div>
@@ -17,7 +22,7 @@
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
+                <button type="submit" class="btn btn-danger">Keluar</button>
             </form>
         </div>
 
@@ -27,18 +32,20 @@
             @endif
 
             <div class="hero-card">
-                <h2>Selamat Datang</h2>
-                <p>Ini adalah simulasi aplikasi Wargaku untuk mengirim dan memantau keluhan warga melalui Bridging API.</p>
+                <h2>Selamat datang kembali</h2>
+                <p>Simulasi aplikasi Wargaku untuk mengirim dan memantau keluhan warga melalui Bridging API.</p>
             </div>
 
             <div class="grid">
                 <div class="menu-card">
-                    <h3>Lihat Keluhan</h3>
+                    <div class="menu-card-icon">&#128203;</div>
+                    <h3>Daftar Keluhan</h3>
                     <p>Pantau daftar keluhan warga yang sudah dikirim melalui sistem simulasi Wargaku.</p>
                     <a href="{{ route('keluhan.index') }}" class="btn btn-secondary">Buka Daftar Keluhan</a>
                 </div>
 
                 <div class="menu-card">
+                    <div class="menu-card-icon">&#9997;</div>
                     <h3>Buat Keluhan</h3>
                     <p>Kirim laporan atau pengaduan baru dengan memilih kategori, kecamatan, dan topik keluhan.</p>
                     <a href="{{ route('keluhan.create') }}" class="btn btn-secondary">Buat Keluhan Baru</a>
