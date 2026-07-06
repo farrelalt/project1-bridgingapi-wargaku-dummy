@@ -2,49 +2,56 @@
 <html>
 <head>
     <title>Login Wargaku Dummy</title>
+    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
 </head>
 <body>
-    <h2>Login Wargaku Dummy</h2>
+    <div class="page-center">
+        <div class="auth-card">
+            <div class="brand">
+                <div class="brand-logo">W</div>
+                <div>
+                    <h2 class="brand-title">Wargaku Dummy</h2>
+                    <p class="brand-subtitle">Simulasi layanan pengaduan warga</p>
+                </div>
+            </div>
 
-    @if(session('success'))
-        <p style="color: green">{{ session('success') }}</p>
-    @endif
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
-    @if(session('error'))
-        <p style="color: red">{{ session('error') }}</p>
-    @endif
+            @if(session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
 
-    @if($errors->any())
-        <ul style="color: red">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
+            @if($errors->any())
+                <ul class="error-list">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
 
-    <form method="POST" action="{{ route('login.process') }}">
-        @csrf
+            <form method="POST" action="{{ route('login.process') }}">
+                @csrf
 
-        <div>
-            <label>Username</label><br>
-            <input type="text" name="user" required>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="user" placeholder="Masukkan username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Masukkan password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <p class="auth-footer">
+                Belum punya akun?
+                <a href="{{ route('register') }}">Register di sini</a>
+            </p>
         </div>
-
-        <br>
-
-        <div>
-            <label>Password</label><br>
-            <input type="password" name="password" required>
-        </div>
-
-        <br>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <p>
-        Belum punya akun?
-        <a href="{{ route('register') }}">Register di sini</a>
-    </p>
+    </div>
 </body>
 </html>

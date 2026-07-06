@@ -2,70 +2,71 @@
 <html>
 <head>
     <title>Register Wargaku Dummy</title>
+    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
 </head>
 <body>
-    <h2>Register Wargaku Dummy</h2>
+    <div class="page-center">
+        <div class="auth-card">
+            <div class="brand">
+                <div class="brand-logo">W</div>
+                <div>
+                    <h2 class="brand-title">Daftar Akun</h2>
+                    <p class="brand-subtitle">Buat akun simulasi Wargaku</p>
+                </div>
+            </div>
 
-    @if(session('success'))
-        <p style="color: green">{{ session('success') }}</p>
-    @endif
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
-    @if(session('error'))
-        <p style="color: red">{{ session('error') }}</p>
-    @endif
+            @if(session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
 
-    @if($errors->any())
-        <ul style="color: red">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
+            @if($errors->any())
+                <ul class="error-list">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
 
-    <form method="POST" action="{{ route('register.process') }}">
-        @csrf
+            <form method="POST" action="{{ route('register.process') }}">
+                @csrf
 
-        <div>
-            <label>Username</label><br>
-            <input type="text" name="user" value="{{ old('user') }}" required>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="user" value="{{ old('user') }}" placeholder="Contoh: ahdan123" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Masukkan password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
+                </div>
+
+                <div class="form-group">
+                    <label>NIK</label>
+                    <input type="text" name="nik" value="{{ old('nik') }}" placeholder="Masukkan NIK" required>
+                </div>
+
+                <div class="form-group">
+                    <label>No HP</label>
+                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Contoh: 08123456789" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+
+            <p class="auth-footer">
+                Sudah punya akun?
+                <a href="{{ route('login') }}">Login di sini</a>
+            </p>
         </div>
-
-        <br>
-
-        <div>
-            <label>Password</label><br>
-            <input type="password" name="password" required>
-        </div>
-
-        <br>
-
-        <div>
-            <label>Nama Lengkap</label><br>
-            <input type="text" name="name" value="{{ old('name') }}" required>
-        </div>
-
-        <br>
-
-        <div>
-            <label>NIK</label><br>
-            <input type="text" name="nik" value="{{ old('nik') }}" required>
-        </div>
-
-        <br>
-
-        <div>
-            <label>No HP</label><br>
-            <input type="text" name="phone" value="{{ old('phone') }}" required>
-        </div>
-
-        <br>
-
-        <button type="submit">Register</button>
-    </form>
-
-    <p>
-        Sudah punya akun?
-        <a href="{{ route('login') }}">Login di sini</a>
-    </p>
+    </div>
 </body>
 </html>

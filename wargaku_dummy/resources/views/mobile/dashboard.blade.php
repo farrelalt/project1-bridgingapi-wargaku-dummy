@@ -2,24 +2,49 @@
 <html>
 <head>
     <title>Dashboard Wargaku Dummy</title>
+    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
 </head>
 <body>
-    <h2>Dashboard Wargaku Dummy</h2>
+    <div class="app-shell">
+        <div class="navbar">
+            <div class="nav-brand">
+                <div class="brand-logo">W</div>
+                <div>
+                    <h1 class="nav-title">Wargaku Dummy</h1>
+                    <p class="nav-subtitle">Dashboard layanan pengaduan warga</p>
+                </div>
+            </div>
 
-    @if(session('success'))
-        <p style="color: green">{{ session('success') }}</p>
-    @endif
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
 
-    <p>Selamat datang di simulasi aplikasi Wargaku.</p>
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
-    <ul>
-        <li><a href="{{ route('keluhan.index') }}">Lihat Keluhan</a></li>
-        <li><a href="{{ route('keluhan.create') }}">Buat Keluhan</a></li>
-    </ul>
+            <div class="hero-card">
+                <h2>Selamat Datang</h2>
+                <p>Ini adalah simulasi aplikasi Wargaku untuk mengirim dan memantau keluhan warga melalui Bridging API.</p>
+            </div>
 
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
+            <div class="grid">
+                <div class="menu-card">
+                    <h3>Lihat Keluhan</h3>
+                    <p>Pantau daftar keluhan warga yang sudah dikirim melalui sistem simulasi Wargaku.</p>
+                    <a href="{{ route('keluhan.index') }}" class="btn btn-secondary">Buka Daftar Keluhan</a>
+                </div>
+
+                <div class="menu-card">
+                    <h3>Buat Keluhan</h3>
+                    <p>Kirim laporan atau pengaduan baru dengan memilih kategori, kecamatan, dan topik keluhan.</p>
+                    <a href="{{ route('keluhan.create') }}" class="btn btn-secondary">Buat Keluhan Baru</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
