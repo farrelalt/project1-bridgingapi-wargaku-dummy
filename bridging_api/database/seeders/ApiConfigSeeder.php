@@ -1,0 +1,200 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\ApiConfig;
+use Illuminate\Database\Seeder;
+
+class ApiConfigSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $configs = [
+            [
+                'service_name' => 'Login',
+                'local_endpoint' => '/api/v2/login',
+                'target_endpoint' => '/api/login',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Login pengguna Wargaku melalui Media Center.',
+            ],
+            [
+                'service_name' => 'Register',
+                'local_endpoint' => '/api/v2/register',
+                'target_endpoint' => '/api/register',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Registrasi pengguna baru.',
+            ],
+            [
+                'service_name' => 'Profile',
+                'local_endpoint' => '/api/v2/profile',
+                'target_endpoint' => '/api/profile',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Mengambil data profil pengguna.',
+            ],
+
+            [
+                'service_name' => 'Kategori',
+                'local_endpoint' => '/api/v2/kategori',
+                'target_endpoint' => '/api/kategori',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar kategori keluhan.',
+            ],
+            [
+                'service_name' => 'Chanel',
+                'local_endpoint' => '/api/v2/chanel',
+                'target_endpoint' => '/api/chanel',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar channel pengaduan.',
+            ],
+            [
+                'service_name' => 'Kecamatan',
+                'local_endpoint' => '/api/v2/kecamatan',
+                'target_endpoint' => '/api/kecamatan',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar kecamatan.',
+            ],
+            [
+                'service_name' => 'Kelurahan',
+                'local_endpoint' => '/api/v2/kelurahan/{id_kec}',
+                'target_endpoint' => '/api/kelurahan/{id_kec}',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar kelurahan berdasarkan kecamatan.',
+            ],
+            [
+                'service_name' => 'Topik',
+                'local_endpoint' => '/api/v2/topik',
+                'target_endpoint' => '/api/topik',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar topik keluhan.',
+            ],
+            [
+                'service_name' => 'Status',
+                'local_endpoint' => '/api/v2/status',
+                'target_endpoint' => '/api/status',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil daftar status keluhan.',
+            ],
+            [
+                'service_name' => 'Instansi',
+                'local_endpoint' => '/api/v2/instansi',
+                'target_endpoint' => '/api/instansi',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Mengambil atau menentukan instansi berdasarkan parameter tertentu.',
+            ],
+
+            [
+                'service_name' => 'Keluhan Create',
+                'local_endpoint' => '/api/v2/keluhan/create',
+                'target_endpoint' => '/api/keluhan_create',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Membuat keluhan baru.',
+            ],
+            [
+                'service_name' => 'Keluhan List',
+                'local_endpoint' => '/api/v2/keluhan',
+                'target_endpoint' => '/api/keluhan',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Mengambil daftar keluhan.',
+            ],
+            [
+                'service_name' => 'Keluhan Detail',
+                'local_endpoint' => '/api/v2/keluhan/{id}',
+                'target_endpoint' => '/api/keluhan_detail/{id}',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Mengambil detail keluhan berdasarkan ID.',
+            ],
+            [
+                'service_name' => 'Keluhan Selesai',
+                'local_endpoint' => '/api/v2/keluhan/selesai',
+                'target_endpoint' => '/api/keluhan_selesai',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Menandai keluhan sebagai selesai.',
+            ],
+            [
+                'service_name' => 'Keluhan Hapus',
+                'local_endpoint' => '/api/v2/keluhan/hapus',
+                'target_endpoint' => '/api/keluhan_hapus',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Menghapus data keluhan.',
+            ],
+
+            [
+                'service_name' => 'Tanggapan Create',
+                'local_endpoint' => '/api/v2/tanggapan/create',
+                'target_endpoint' => '/api/tanggapan_create',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Membuat tanggapan pada keluhan.',
+            ],
+            [
+                'service_name' => 'Tanggapan List',
+                'local_endpoint' => '/api/v2/tanggapan',
+                'target_endpoint' => '/api/tanggapan',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Mengambil daftar tanggapan keluhan.',
+            ],
+
+            [
+                'service_name' => 'Keluhan Rating',
+                'local_endpoint' => '/api/v2/keluhan/rating',
+                'target_endpoint' => '/api/keluhan_rating',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Memberikan rating terhadap penyelesaian keluhan.',
+            ],
+            [
+                'service_name' => 'View Keluhan Rating',
+                'local_endpoint' => '/api/v2/keluhan/rating',
+                'target_endpoint' => '/api/view_keluhan_rating',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => true,
+                'description' => 'Melihat rating keluhan.',
+            ],
+        ];
+
+        foreach ($configs as $config) {
+            ApiConfig::updateOrCreate(
+                [
+                    'local_endpoint' => $config['local_endpoint'],
+                    'method' => $config['method'],
+                ],
+                $config
+            );
+        }
+    }
+}
