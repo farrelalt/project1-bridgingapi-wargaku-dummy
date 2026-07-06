@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Wargaku Dummy</title>
+    <title>Buat Keluhan</title>
     <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
 </head>
 <body>
@@ -11,38 +11,104 @@
                 <div class="brand-logo">W</div>
                 <div>
                     <h1 class="nav-title">Wargaku Dummy</h1>
-                    <p class="nav-subtitle">Dashboard layanan pengaduan warga</p>
+                    <p class="nav-subtitle">Form pengaduan warga</p>
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
+            <a href="{{ route('keluhan.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
 
         <div class="container">
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            <div class="hero-card">
-                <h2>Selamat Datang</h2>
-                <p>Ini adalah simulasi aplikasi Wargaku untuk mengirim dan memantau keluhan warga melalui Bridging API.</p>
-            </div>
-
-            <div class="grid">
-                <div class="menu-card">
-                    <h3>Lihat Keluhan</h3>
-                    <p>Pantau daftar keluhan warga yang sudah dikirim melalui sistem simulasi Wargaku.</p>
-                    <a href="{{ route('keluhan.index') }}" class="btn btn-secondary">Buka Daftar Keluhan</a>
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <h2>Buat Keluhan</h2>
+                        <p>Lengkapi form berikut untuk mengirim simulasi keluhan warga.</p>
+                    </div>
                 </div>
 
-                <div class="menu-card">
-                    <h3>Buat Keluhan</h3>
-                    <p>Kirim laporan atau pengaduan baru dengan memilih kategori, kecamatan, dan topik keluhan.</p>
-                    <a href="{{ route('keluhan.create') }}" class="btn btn-secondary">Buat Keluhan Baru</a>
-                </div>
+                @if(session('error'))
+                    <div class="alert alert-error">{{ session('error') }}</div>
+                @endif
+
+                @if($errors->any())
+                    <ul class="error-list">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+
+                <form method="POST" action="{{ route('keluhan.store') }}">
+                    @csrf
+
+                    <div class="form-grid">
+                        <div class="form-group form-full">
+                            <label>Judul</label>
+                            <input type="text" name="judul" placeholder="Contoh: Jalan rusak di depan kos" required>
+                        </div>
+
+                        <div class="form-group form-full">
+                            <label>Isi Keluhan</label>
+                            <textarea name="konten" placeholder="Tuliskan detail keluhan..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kategori</label>
+                            <select name="kategori_id" required>
+                                <option value="">Pilih Kategori</option>
+                                @foreach($kategori as $item)
+                                    <option value="{{ $item['id'] }}">
+                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kecamatan</label>
+                            <select name="kecamatan_id" required>
+                                <option value="">Pilih Kecamatan</option>
+                                @foreach($kecamatan as $item)
+                                    <option value="{{ $item['id'] }}">
+                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Topik</label>
+                            <select name="topik_id" required>
+                                <option value="">Pilih Topik</option>
+                                @foreach($topik as $item)
+                                    <option value="{{ $item['id'] }}">
+                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="text" name="latitude" placeholder="-7.2575">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="text" name="longitude" placeholder="112.7521">
+                        </div>
+
+                        <div class="form-group form-full">
+                            <label>Alamat</label>
+                            <textarea name="alamat" placeholder="Masukkan alamat lokasi keluhan"></textarea>
+                        </div>
+
+                        <div class="form-group form-full">
+                            <button type="submit" class="btn btn-primary">Kirim Keluhan</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
