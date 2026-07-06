@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mobile;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\ConnectionException;
 
 class AuthController extends Controller
 {
@@ -20,24 +21,45 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $response = Http::post(config('services.bridging.base_url') . '/login', [
-            'user' => $request->user,
-            'password' => $request->password,
-        ]);
-
-        if ($response->successful()) {
-            $data = $response->json();
-
+        if (config('services.wargaku.mock_mode')) {
             session([
-                'token' => $data['token'] ?? null,
-                'user' => $data['data'] ?? null,
+                'token' => 'dummy-token-wargaku',
+                'user' => [
+                    'user' => $request->user,
+                    'name' => 'User Dummy Wargaku',
+                ],
             ]);
 
             return redirect()->route('dashboard')
-                ->with('success', 'Login berhasil');
+                ->with('success', 'Login berhasil dalam mode dummy.');
         }
 
-        return back()->with('error', 'Login gagal. Periksa user dan password.');
+        try {
+            $response = Http::timeout(5)->post(config('services.bridging.base_url') . '/login', [
+                'user' => $request->user,
+                'password' => $request->password,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                session([
+                    'token' => $data['token'] ?? null,
+                    'user' => $data['data'] ?? null,
+                ]);
+
+                return redirect()->route('dashboard')
+                    ->with('success', 'Login berhasil.');
+            }
+
+            $data = $response->json();
+            $message = $data['message'] ?? 'Login gagal dari Bridging API. Status: ' . $response->status();
+
+            return back()->with('error', $message);
+
+        } catch (ConnectionException $e) {
+            return back()->with('error', 'Bridging API belum berjalan di port 8000.');
+        }
     }
 
     public function showRegister()
@@ -55,20 +77,33 @@ class AuthController extends Controller
             'phone' => 'required',
         ]);
 
-        $response = Http::post(config('services.bridging.base_url') . '/register', [
-            'user' => $request->user,
-            'password' => $request->password,
-            'name' => $request->name,
-            'nik' => $request->nik,
-            'phone' => $request->phone,
-        ]);
-
-        if ($response->successful()) {
+        if (config('services.wargaku.mock_mode')) {
             return redirect()->route('login')
-                ->with('success', 'Register berhasil. Silakan login.');
+                ->with('success', 'Register berhasil dalam mode dummy. Silakan login.');
         }
 
-        return back()->with('error', 'Register gagal.');
+        try {
+            $response = Http::timeout(5)->post(config('services.bridging.base_url') . '/register', [
+                'user' => $request->user,
+                'password' => $request->password,
+                'name' => $request->name,
+                'nik' => $request->nik,
+                'phone' => $request->phone,
+            ]);
+
+            if ($response->successful()) {
+                return redirect()->route('login')
+                    ->with('success', 'Register berhasil. Silakan login.');
+            }
+
+            $data = $response->json();
+            $message = $data['message'] ?? 'Register gagal dari Bridging API. Status: ' . $response->status();
+
+            return back()->with('error', $message);
+
+        } catch (ConnectionException $e) {
+            return back()->with('error', 'Bridging API belum berjalan di port 8000.');
+        }
     }
 
     public function logout()
@@ -76,6 +111,6 @@ class AuthController extends Controller
         session()->flush();
 
         return redirect()->route('login')
-            ->with('success', 'Logout berhasil');
+            ->with('success', 'Logout berhasil.');
     }
 }

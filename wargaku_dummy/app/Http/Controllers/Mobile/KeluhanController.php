@@ -24,9 +24,26 @@ class KeluhanController extends Controller
 
     public function create()
     {
-        $kategori = Http::get(config('services.bridging.base_url') . '/kategori')->json()['data'] ?? [];
-        $kecamatan = Http::get(config('services.bridging.base_url') . '/kecamatan')->json()['data'] ?? [];
-        $topik = Http::get(config('services.bridging.base_url') . '/topik')->json()['data'] ?? [];
+        $kategori = [
+            ['id' => 1, 'nama' => 'Infrastruktur'],
+            ['id' => 2, 'nama' => 'Penerangan Jalan'],
+            ['id' => 3, 'nama' => 'Kebersihan'],
+            ['id' => 4, 'nama' => 'Keamanan'],
+        ];
+
+        $kecamatan = [
+            ['id' => 1, 'nama' => 'Gubeng'],
+            ['id' => 2, 'nama' => 'Sukolilo'],
+            ['id' => 3, 'nama' => 'Wonokromo'],
+            ['id' => 4, 'nama' => 'Rungkut'],
+        ];
+
+        $topik = [
+            ['id' => 1, 'nama' => 'Jalan Rusak'],
+            ['id' => 2, 'nama' => 'Lampu Jalan Mati'],
+            ['id' => 3, 'nama' => 'Sampah Menumpuk'],
+            ['id' => 4, 'nama' => 'Gangguan Ketertiban'],
+        ];
 
         return view('mobile.keluhan.create', compact('kategori', 'kecamatan', 'topik'));
     }

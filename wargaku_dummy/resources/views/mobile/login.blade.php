@@ -14,25 +14,37 @@
         <p style="color: red">{{ session('error') }}</p>
     @endif
 
+    @if($errors->any())
+        <ul style="color: red">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    @endif
+
     <form method="POST" action="{{ route('login.process') }}">
         @csrf
 
         <div>
-            <label>User</label>
+            <label>Username</label><br>
             <input type="text" name="user" required>
         </div>
 
+        <br>
+
         <div>
-            <label>Password</label>
+            <label>Password</label><br>
             <input type="password" name="password" required>
         </div>
+
+        <br>
 
         <button type="submit">Login</button>
     </form>
 
     <p>
         Belum punya akun?
-        <a href="{{ route('register') }}">Register</a>
+        <a href="{{ route('register') }}">Register di sini</a>
     </p>
 </body>
 </html>
