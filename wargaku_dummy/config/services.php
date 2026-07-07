@@ -35,11 +35,11 @@ return [
         ],
     ],
     'bridging' => [
-    'base_url' => env('BRIDGING_API_BASE_URL', 'http://127.0.0.1:8000/api/v2'),
+        'base_url' => env('BRIDGING_API_BASE_URL', 'http://127.0.0.1:8000/api/v2'),
     ],
 
     'wargaku' => [
-        'mock_mode' => env('WARGAKU_MOCK_MODE', true),
+        'mock_mode' => filter_var(env('WARGAKU_MOCK_MODE', false), FILTER_VALIDATE_BOOLEAN),
     ],
 
 ];

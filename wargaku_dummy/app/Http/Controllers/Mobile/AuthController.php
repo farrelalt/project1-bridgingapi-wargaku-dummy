@@ -35,30 +35,37 @@ class AuthController extends Controller
         }
 
         try {
-            $response = Http::timeout(5)->post(config('services.bridging.base_url') . '/login', [
-                'user' => $request->user,
-                'password' => $request->password,
-            ]);
+            $response = Http::timeout(10)
+                ->acceptJson()
+                ->post(config('services.bridging.base_url') . '/login', [
+                    'user' => $request->user,
+                    'password' => $request->password,
+                ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
+            $json = $response->json();
+
+            if ($response->successful() && ($json['success'] ?? true)) {
+                $token = $this->extractToken($json);
+
+                if (!$token) {
+                    return back()->with('error', 'Login berhasil dari API, tetapi token tidak ditemukan di response.');
+                }
 
                 session([
-                    'token' => $data['token'] ?? null,
-                    'user' => $data['data'] ?? null,
+                    'token' => $token,
+                    'user' => $this->extractUser($json, $request->user),
                 ]);
 
                 return redirect()->route('dashboard')
                     ->with('success', 'Login berhasil.');
             }
 
-            $data = $response->json();
-            $message = $data['message'] ?? 'Login gagal dari Bridging API. Status: ' . $response->status();
-
-            return back()->with('error', $message);
+            return back()->with('error', $this->extractMessage($json, 'Login gagal dari Bridging API. Status: ' . $response->status()));
 
         } catch (ConnectionException $e) {
             return back()->with('error', 'Bridging API belum berjalan di port 8000.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Terjadi error saat login: ' . $e->getMessage());
         }
     }
 
@@ -71,10 +78,10 @@ class AuthController extends Controller
     {
         $request->validate([
             'user' => 'required',
-            'password' => 'required',
+            'password' => 'required|min:6',
             'name' => 'required',
-            'nik' => 'required',
-            'phone' => 'required',
+            'nik' => 'nullable',
+            'phone' => 'nullable',
         ]);
 
         if (config('services.wargaku.mock_mode')) {
@@ -83,26 +90,35 @@ class AuthController extends Controller
         }
 
         try {
-            $response = Http::timeout(5)->post(config('services.bridging.base_url') . '/register', [
-                'user' => $request->user,
-                'password' => $request->password,
-                'name' => $request->name,
-                'nik' => $request->nik,
-                'phone' => $request->phone,
-            ]);
+            $response = Http::timeout(10)
+                ->acceptJson()
+                ->post(config('services.bridging.base_url') . '/register', [
+                    'user' => $request->user,
+                    'password' => $request->password,
+                    'name' => $request->name,
+                    'nik' => $request->nik,
+                    'phone' => $request->phone,
+                ]);
 
-            if ($response->successful()) {
+            $json = $response->json();
+
+            if ($response->successful() && ($json['success'] ?? true)) {
                 return redirect()->route('login')
                     ->with('success', 'Register berhasil. Silakan login.');
             }
 
-            $data = $response->json();
-            $message = $data['message'] ?? 'Register gagal dari Bridging API. Status: ' . $response->status();
-
-            return back()->with('error', $message);
+            return back()
+                ->withInput()
+                ->with('error', $this->extractMessage($json, 'Register gagal dari Bridging API. Status: ' . $response->status()));
 
         } catch (ConnectionException $e) {
-            return back()->with('error', 'Bridging API belum berjalan di port 8000.');
+            return back()
+                ->withInput()
+                ->with('error', 'Bridging API belum berjalan di port 8000.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi error saat register: ' . $e->getMessage());
         }
     }
 
@@ -112,5 +128,57 @@ class AuthController extends Controller
 
         return redirect()->route('login')
             ->with('success', 'Logout berhasil.');
+    }
+
+    private function extractToken(?array $json): ?string
+    {
+        if (!$json) {
+            return null;
+        }
+
+        return data_get($json, 'token')
+            ?? data_get($json, 'access_token')
+            ?? data_get($json, 'data.token')
+            ?? data_get($json, 'data.access_token')
+            ?? data_get($json, 'data.data.token')
+            ?? data_get($json, 'data.data.access_token');
+    }
+
+    private function extractUser(?array $json, string $fallbackUser): array
+    {
+        if (!$json) {
+            return [
+                'user' => $fallbackUser,
+                'name' => $fallbackUser,
+            ];
+        }
+
+        $user = data_get($json, 'data.user')
+            ?? data_get($json, 'data.data.user')
+            ?? data_get($json, 'data.data')
+            ?? [];
+
+        if (!is_array($user)) {
+            $user = [];
+        }
+
+        return [
+            'id' => $user['id'] ?? null,
+            'user' => $user['user'] ?? $fallbackUser,
+            'name' => $user['name'] ?? $user['nama'] ?? $fallbackUser,
+            'phone' => $user['phone'] ?? null,
+        ];
+    }
+
+    private function extractMessage(?array $json, string $fallback): string
+    {
+        if (!$json) {
+            return $fallback;
+        }
+
+        return data_get($json, 'message')
+            ?? data_get($json, 'data.message')
+            ?? data_get($json, 'data.error')
+            ?? $fallback;
     }
 }
