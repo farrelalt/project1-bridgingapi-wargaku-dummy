@@ -71,8 +71,8 @@
                             <select name="kategori_id" required>
                                 <option value="">Pilih Kategori</option>
                                 @foreach($kategori as $item)
-                                    <option value="{{ $item['id'] }}">
-                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    <option value="{{ $item['id'] ?? $item['kategori_id'] ?? '' }}">
+                                        {{ $item['nama_kategori'] ?? $item['nama'] ?? $item['name'] ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -83,8 +83,8 @@
                             <select name="kecamatan_id" required>
                                 <option value="">Pilih Kecamatan</option>
                                 @foreach($kecamatan as $item)
-                                    <option value="{{ $item['id'] }}">
-                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    <option value="{{ $item['id'] ?? $item['kecamatan_id'] ?? '' }}">
+                                        {{ $item['nama_kecamatan'] ?? $item['nama'] ?? $item['name'] ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -95,8 +95,8 @@
                             <select name="topik_id" required>
                                 <option value="">Pilih Topik</option>
                                 @foreach($topik as $item)
-                                    <option value="{{ $item['id'] }}">
-                                        {{ $item['nama'] ?? $item['name'] ?? '-' }}
+                                    <option value="{{ $item['id'] ?? $item['topik_id'] ?? '' }}">
+                                        {{ $item['nama_topik'] ?? $item['nama'] ?? $item['name'] ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>

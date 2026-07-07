@@ -1,0 +1,50 @@
+<svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="480" fill="#06254F"/>
+  <circle cx="500" cy="120" r="150" fill="#0B4DA1" opacity="0.35"/>
+  <circle cx="540" cy="90" r="70" fill="#2E6FED" opacity="0.25"/>
+
+  <rect x="40" y="230" width="70" height="220" fill="#0B4DA1"/>
+  <rect x="120" y="180" width="90" height="270" fill="#1758A8"/>
+  <rect x="220" y="260" width="60" height="190" fill="#0B4DA1"/>
+  <rect x="290" y="140" width="100" height="310" fill="#2E6FED"/>
+  <rect x="400" y="200" width="80" height="250" fill="#1758A8"/>
+  <rect x="490" y="255" width="70" height="195" fill="#0B4DA1"/>
+  <rect x="570" y="210" width="50" height="240" fill="#17427A"/>
+
+  <g fill="#E6F1FB" opacity="0.85">
+    <rect x="150" y="205" width="10" height="14"/>
+    <rect x="172" y="205" width="10" height="14"/>
+    <rect x="150" y="235" width="10" height="14"/>
+    <rect x="172" y="235" width="10" height="14"/>
+    <rect x="150" y="265" width="10" height="14"/>
+    <rect x="172" y="265" width="10" height="14"/>
+
+    <rect x="315" y="170" width="12" height="16"/>
+    <rect x="340" y="170" width="12" height="16"/>
+    <rect x="365" y="170" width="12" height="16"/>
+    <rect x="315" y="205" width="12" height="16"/>
+    <rect x="340" y="205" width="12" height="16"/>
+    <rect x="365" y="205" width="12" height="16"/>
+    <rect x="315" y="240" width="12" height="16"/>
+    <rect x="340" y="240" width="12" height="16"/>
+    <rect x="365" y="240" width="12" height="16"/>
+
+    <rect x="418" y="225" width="10" height="14"/>
+    <rect x="440" y="225" width="10" height="14"/>
+    <rect x="462" y="225" width="10" height="14"/>
+    <rect x="418" y="255" width="10" height="14"/>
+    <rect x="440" y="255" width="10" height="14"/>
+    <rect x="462" y="255" width="10" height="14"/>
+
+    <rect x="505" y="278" width="10" height="14"/>
+    <rect x="527" y="278" width="10" height="14"/>
+    <rect x="505" y="308" width="10" height="14"/>
+    <rect x="527" y="308" width="10" height="14"/>
+  </g>
+
+  <rect x="0" y="450" width="640" height="30" fill="#042C53"/>
+
+  <g stroke="#2E6FED" stroke-width="3" opacity="0.5">
+    <line x1="0" y1="450" x2="640" y2="450"/>
+  </g>
+</svg>

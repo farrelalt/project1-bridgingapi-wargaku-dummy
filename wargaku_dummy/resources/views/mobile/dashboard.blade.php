@@ -26,6 +26,14 @@
             </form>
         </div>
 
+        <div class="photo-hero">
+            <img src="{{ asset('images/civic-illustration.svg') }}" alt="Ilustrasi Kota Surabaya">
+            <div class="photo-hero-content">
+                <span class="photo-hero-eyebrow">Layanan Publik Digital</span>
+                <h1>Wargaku, Suara Warga Surabaya</h1>
+            </div>
+        </div>
+
         <div class="container">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
