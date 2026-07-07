@@ -12,10 +12,28 @@ Route::get('/', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/api-configs', [ApiConfigAdminController::class, 'index'])->name('api-configs.index');
-    Route::get('/api-configs/{id}/edit', [ApiConfigAdminController::class, 'edit'])->name('api-configs.edit');
-    Route::put('/api-configs/{id}', [ApiConfigAdminController::class, 'update'])->name('api-configs.update');
+    Route::get('/api-configs', [ApiConfigAdminController::class, 'index'])
+        ->name('api-configs.index');
+
+    Route::get('/api-configs/create', [ApiConfigAdminController::class, 'create'])
+        ->name('api-configs.create');
+
+    Route::post('/api-configs', [ApiConfigAdminController::class, 'store'])
+        ->name('api-configs.store');
+
+    Route::get('/api-configs/{id}/edit', [ApiConfigAdminController::class, 'edit'])
+        ->name('api-configs.edit');
+        
+    Route::put('/api-configs/{id}', [ApiConfigAdminController::class, 'update'])
+        ->name('api-configs.update');
 
     Route::get('/api-logs', [ApiLogAdminController::class, 'index'])->name('api-logs.index');
+
+    Route::delete('/api-logs/clear/failed', [ApiLogAdminController::class, 'clearFailed'])
+    ->name('api-logs.clear-failed');
+
+    Route::delete('/api-logs/clear/all', [ApiLogAdminController::class, 'clearAll'])
+    ->name('api-logs.clear-all');
+
     Route::get('/api-logs/{id}', [ApiLogAdminController::class, 'show'])->name('api-logs.show');
 });

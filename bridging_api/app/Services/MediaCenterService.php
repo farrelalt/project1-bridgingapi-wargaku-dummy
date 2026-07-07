@@ -166,6 +166,90 @@ class MediaCenterService
             return $result;
         }
     }
+        public function forward(
+        string $method,
+        string $endpoint,
+        array $data = [],
+        array $headers = [],
+        ?string $serviceName = null,
+        ?string $localEndpoint = null
+    ): array {
+        $method = strtoupper($method);
+
+        $targetUrl = $this->resolveTargetUrl(
+            fallbackEndpoint: $endpoint,
+            method: $method,
+            localEndpoint: $localEndpoint
+        );
+
+        try {
+            $http = Http::timeout($this->timeout)
+                ->acceptJson()
+                ->withHeaders($headers);
+
+            if ($method === 'GET') {
+                $response = $http->get($targetUrl, $data);
+            } else {
+                $response = $http->send($method, $targetUrl, [
+                    'json' => $data,
+                ]);
+            }
+
+            $responseData = $response->json();
+
+            if ($responseData === null) {
+                $responseData = [
+                    'raw_response' => $response->body(),
+                ];
+            }
+
+            $result = [
+                'success' => $response->successful(),
+                'status' => $response->status(),
+                'message' => $response->successful()
+                    ? 'Request berhasil diteruskan ke Media Center'
+                    : 'Request gagal dari Media Center',
+                'data' => $responseData,
+            ];
+
+            $this->saveLog(
+                serviceName: $serviceName,
+                localEndpoint: $localEndpoint,
+                targetEndpoint: $targetUrl,
+                method: $method,
+                requestPayload: $data,
+                responsePayload: $responseData,
+                statusCode: $response->status(),
+                isSuccess: $response->successful(),
+                errorMessage: $response->successful() ? null : 'Media Center mengembalikan response gagal'
+            );
+
+            return $result;
+        } catch (\Throwable $e) {
+            $result = [
+                'success' => false,
+                'status' => 503,
+                'message' => 'Media Center tidak bisa dihubungi',
+                'data' => [
+                    'error' => $e->getMessage(),
+                ],
+            ];
+
+            $this->saveLog(
+                serviceName: $serviceName,
+                localEndpoint: $localEndpoint,
+                targetEndpoint: $targetUrl,
+                method: $method,
+                requestPayload: $data,
+                responsePayload: $result['data'],
+                statusCode: 503,
+                isSuccess: false,
+                errorMessage: $e->getMessage()
+            );
+
+            return $result;
+        }
+    }
 
     private function resolveTargetUrl(
         string $fallbackEndpoint,

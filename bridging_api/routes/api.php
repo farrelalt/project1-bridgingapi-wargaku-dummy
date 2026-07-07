@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V2\TanggapanController;
 use App\Http\Controllers\Api\V2\RatingController;
 use App\Http\Controllers\Api\V2\ApiConfigController;
 use App\Http\Controllers\Api\V2\MonitoringController;
+use App\Http\Controllers\Api\V2\DynamicForwardController;
 
 Route::prefix('v2')->middleware('restricted.endpoint')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -47,4 +48,7 @@ Route::prefix('v2')->middleware('restricted.endpoint')->group(function () {
 
     Route::get('/monitoring/summary', [MonitoringController::class, 'summary']);
     Route::get('/health', [MonitoringController::class, 'health']);
+
+    Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/{any}', [DynamicForwardController::class, 'handle'])
+    ->where('any', '.*');
 });

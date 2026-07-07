@@ -19,4 +19,5 @@ class ApiConfig extends Model
     protected $casts = [
         'is_restricted' => 'boolean',
     ];
+
 }
