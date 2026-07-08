@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Models\ApiLog;
+use App\Helpers\ApiResponse;
 
 class ApiLogController extends Controller
 {
@@ -34,11 +35,6 @@ class ApiLogController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'source' => 'bridging_api',
-            'message' => 'Detail log berhasil diambil',
-            'data' => $log,
-        ], 200);
+       return ApiResponse::fromServiceResult($result);
     }
 }

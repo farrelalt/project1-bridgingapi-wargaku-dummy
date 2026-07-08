@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Controllers\Controller;
 use App\Services\MediaCenterService;
 use Illuminate\Http\Request;
+use App\Helpers\ApiResponse;
 
 class MasterDataController extends Controller
 {
@@ -108,12 +109,6 @@ class MasterDataController extends Controller
 
     private function sendResponse(array $result)
     {
-        return response()->json([
-            'success' => $result['success'],
-            'source' => 'bridging_api',
-            'target' => 'media_center',
-            'message' => $result['message'],
-            'data' => $result['data'],
-        ], $result['status']);
+        return ApiResponse::fromServiceResult($result);
     }
 }

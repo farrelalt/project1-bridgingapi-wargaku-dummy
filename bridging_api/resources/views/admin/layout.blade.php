@@ -596,8 +596,9 @@
         /* ================= API CONFIG PAGE ================= */
 
         .api-config-panel {
-            --api-config-cols: 56px 1fr 1.4fr 1.4fr 110px 110px 120px 130px;
+            --api-config-cols: 56px 1fr 1.4fr 1.4fr 110px 110px 120px 180px;
         }
+        
 
         .api-config-panel-head {
             display: grid;
@@ -767,6 +768,33 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .config-action-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+
+        .delete-btn {
+            background: var(--coral-soft);
+            color: var(--coral);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            width: fit-content;
+            font-family: inherit;
+            transition: transform .2s ease, background .2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #FFD1D7;
+            transform: translateY(-2px);
         }
 
         /* ================= HEALTH CHECK ================= */
@@ -1510,7 +1538,7 @@
 <script>
     let wargakuPendingDeleteForm = null;
 
-    function openWargakuDeleteModal(form, type) {
+    function openWargakuDeleteModal(form, type, name = null) {
         wargakuPendingDeleteForm = form;
 
         const overlay = document.getElementById('wargaku-confirm-overlay');
@@ -1533,13 +1561,24 @@
             desc.textContent = 'Hanya log dengan status request gagal yang akan dihapus. Log sukses tetap tersimpan.';
             tagText.textContent = 'Data log gagal tidak bisa dikembalikan';
             submitButton.textContent = 'Ya, hapus log gagal';
+        } else if (type === 'api-config') {
+            modal.classList.add('danger');
+            submitButton.classList.add('modal-btn-danger');
+
+            icon.textContent = '🗑️';
+            title.textContent = 'Hapus endpoint?';
+            desc.textContent = name
+                ? `Endpoint "${name}" akan dihapus dari API Config. Request ke endpoint ini tidak akan bisa diproses lagi.`
+                : 'Endpoint ini akan dihapus dari API Config. Request ke endpoint ini tidak akan bisa diproses lagi.';
+            tagText.textContent = 'Endpoint yang dihapus tidak bisa digunakan lagi';
+            submitButton.textContent = 'Ya, hapus endpoint';
         } else {
             modal.classList.add('danger');
             submitButton.classList.add('modal-btn-danger');
 
             icon.textContent = '🗑️';
             title.textContent = 'Hapus semua log?';
-            desc.textContent = 'Semua data API log termasuk yang sukses dan gagal akan dihapus permanen dari sistem.';
+            desc.textContent = 'Semua data API log — termasuk yang sukses dan gagal — akan dihapus permanen dari sistem.';
             tagText.textContent = 'Data tidak bisa dikembalikan';
             submitButton.textContent = 'Ya, hapus semua';
         }
@@ -1548,7 +1587,6 @@
 
         return false;
     }
-
     function closeWargakuConfirmModal() {
         wargakuPendingDeleteForm = null;
 

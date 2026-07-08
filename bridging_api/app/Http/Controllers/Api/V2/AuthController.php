@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\MediaCenterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ApiResponse;
 
 class AuthController extends Controller
 {
@@ -82,12 +83,6 @@ class AuthController extends Controller
             localEndpoint: '/api/v2/register'
         );
 
-        return response()->json([
-            'success' => $result['success'],
-            'source' => 'bridging_api',
-            'target' => 'media_center',
-            'message' => $result['message'],
-            'data' => $result['data'],
-        ], $result['status']);
+        return ApiResponse::fromServiceResult($result);
     }
 }

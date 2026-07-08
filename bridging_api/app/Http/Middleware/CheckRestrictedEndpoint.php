@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ApiResponse;
 use App\Models\ApiConfig;
 use App\Models\ApiLog;
 use Closure;
@@ -50,21 +51,25 @@ class CheckRestrictedEndpoint
 
     private function findConfig(Request $request): ?ApiConfig
     {
-        $path = '/' . trim($request->path(), '/');
-        $method = strtoupper($request->method());
+        $path = $this->normalizeEndpoint($request->path());
+        $method = strtoupper(trim($request->method()));
 
-        $exactConfig = ApiConfig::where('method', $method)
-            ->where('local_endpoint', $path)
-            ->first();
-
-        if ($exactConfig) {
-            return $exactConfig;
-        }
-
-        $configs = ApiConfig::where('method', $method)->get();
+        $configs = ApiConfig::all()
+            ->filter(function ($config) use ($method) {
+                return strtoupper(trim($config->method)) === $method;
+            })
+            ->values();
 
         foreach ($configs as $config) {
-            $regex = $this->endpointToRegex($config->local_endpoint);
+            if ($this->normalizeEndpoint($config->local_endpoint) === $path) {
+                return $config;
+            }
+        }
+
+        foreach ($configs as $config) {
+            $regex = $this->endpointToRegex(
+                $this->normalizeEndpoint($config->local_endpoint)
+            );
 
             if (preg_match($regex, $path)) {
                 return $config;
@@ -72,6 +77,13 @@ class CheckRestrictedEndpoint
         }
 
         return null;
+    }
+
+    private function normalizeEndpoint(?string $endpoint): string
+    {
+        $endpoint = trim((string) $endpoint);
+
+        return '/' . trim($endpoint, '/');
     }
 
     private function endpointToRegex(string $endpoint): string
@@ -116,7 +128,18 @@ class CheckRestrictedEndpoint
             errorMessage: $message
         );
 
-        return response()->json($responsePayload, $statusCode);
+        return ApiResponse::error(
+            message: $message,
+            statusCode: $statusCode,
+            data: [
+                'service_name' => $config->service_name,
+                'local_endpoint' => $config->local_endpoint,
+                'method' => $config->method,
+                'status' => $config->status,
+                'is_restricted' => $config->is_restricted,
+            ],
+            target: 'media_center'
+        );
     }
 
     private function saveBlockedLog(

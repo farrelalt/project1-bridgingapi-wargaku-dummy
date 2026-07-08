@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\MediaCenterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ApiResponse;
 
 class RatingController extends Controller
 {
@@ -87,12 +88,6 @@ class RatingController extends Controller
 
     private function sendResponse(array $result)
     {
-        return response()->json([
-            'success' => $result['success'],
-            'source' => 'bridging_api',
-            'target' => 'media_center',
-            'message' => $result['message'],
-            'data' => $result['data'],
-        ], $result['status']);
+       return ApiResponse::fromServiceResult($result);
     }
 }

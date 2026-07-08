@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V2;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\ApiConfig;
 use App\Services\MediaCenterService;
@@ -16,21 +17,21 @@ class DynamicForwardController extends Controller
 
     public function handle(Request $request, ?string $any = null)
     {
-        $localEndpoint = '/' . trim($request->path(), '/');
-        $method = strtoupper($request->method());
+        $localEndpoint = $this->normalizeEndpoint($request->path());
+        $method = strtoupper(trim($request->method()));
 
         $config = $this->findConfig($localEndpoint, $method);
 
         if (!$config) {
-            return response()->json([
-                'success' => false,
-                'source' => 'bridging_api',
-                'message' => 'Endpoint tidak ditemukan di API Config.',
-                'data' => [
+            return ApiResponse::error(
+                message: 'Endpoint tidak ditemukan di API Config.',
+                statusCode: 404,
+                data: [
                     'local_endpoint' => $localEndpoint,
                     'method' => $method,
                 ],
-            ], 404);
+                target: null
+            );
         }
 
         $headers = $this->getForwardHeaders($request);
@@ -54,29 +55,29 @@ class DynamicForwardController extends Controller
             localEndpoint: $localEndpoint
         );
 
-        return response()->json([
-            'success' => $result['success'],
-            'source' => 'bridging_api',
-            'target' => 'media_center',
-            'message' => $result['message'],
-            'data' => $result['data'],
-        ], $result['status']);
+        return ApiResponse::fromServiceResult($result);
     }
 
     private function findConfig(string $localEndpoint, string $method): ?ApiConfig
     {
-        $exactConfig = ApiConfig::where('method', $method)
-            ->where('local_endpoint', $localEndpoint)
-            ->first();
+        $localEndpoint = $this->normalizeEndpoint($localEndpoint);
+        $method = strtoupper(trim($method));
 
-        if ($exactConfig) {
-            return $exactConfig;
-        }
-
-        $configs = ApiConfig::where('method', $method)->get();
+        $configs = ApiConfig::query()
+            ->whereRaw('UPPER(TRIM(method)) = ?', [$method])
+            ->get();
 
         foreach ($configs as $config) {
-            $regex = $this->endpointToRegex($config->local_endpoint);
+            $configEndpoint = $this->normalizeEndpoint($config->local_endpoint);
+
+            if ($configEndpoint === $localEndpoint) {
+                return $config;
+            }
+        }
+
+        foreach ($configs as $config) {
+            $configEndpoint = $this->normalizeEndpoint($config->local_endpoint);
+            $regex = $this->endpointToRegex($configEndpoint);
 
             if (preg_match($regex, $localEndpoint)) {
                 return $config;
@@ -84,6 +85,15 @@ class DynamicForwardController extends Controller
         }
 
         return null;
+    }
+
+    private function normalizeEndpoint(?string $endpoint): string
+    {
+        $endpoint = trim((string) $endpoint);
+        $endpoint = str_replace('\\', '/', $endpoint);
+        $endpoint = preg_replace('#/+#', '/', $endpoint);
+
+        return '/' . trim($endpoint, '/');
     }
 
     private function endpointToRegex(string $endpoint): string
@@ -119,6 +129,10 @@ class DynamicForwardController extends Controller
         string $targetPattern,
         string $actualLocalEndpoint
     ): string {
+        $localPattern = $this->normalizeEndpoint($localPattern);
+        $targetPattern = $this->normalizeEndpoint($targetPattern);
+        $actualLocalEndpoint = $this->normalizeEndpoint($actualLocalEndpoint);
+
         $localSegments = explode('/', trim($localPattern, '/'));
         $actualSegments = explode('/', trim($actualLocalEndpoint, '/'));
 
@@ -137,6 +151,6 @@ class DynamicForwardController extends Controller
             }
         }
 
-        return '/' . trim($targetPattern, '/');
+        return $this->normalizeEndpoint($targetPattern);
     }
 }

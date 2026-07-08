@@ -27,6 +27,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/api-configs/{id}', [ApiConfigAdminController::class, 'update'])
         ->name('api-configs.update');
 
+    Route::delete('/api-configs/{id}', [ApiConfigAdminController::class, 'destroy'])
+    ->name('api-configs.destroy');
+
     Route::get('/api-logs', [ApiLogAdminController::class, 'index'])->name('api-logs.index');
 
     Route::delete('/api-logs/clear/failed', [ApiLogAdminController::class, 'clearFailed'])
@@ -35,5 +38,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/api-logs/clear/all', [ApiLogAdminController::class, 'clearAll'])
     ->name('api-logs.clear-all');
 
+    Route::get('/api-logs/live-data', [ApiLogAdminController::class, 'liveData'])
+    ->name('api-logs.live-data');
+    
     Route::get('/api-logs/{id}', [ApiLogAdminController::class, 'show'])->name('api-logs.show');
 });

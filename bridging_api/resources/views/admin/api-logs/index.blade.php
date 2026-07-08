@@ -162,7 +162,19 @@
             <div>
                 <h3 class="panel-title">Daftar API Logs</h3>
                 <div class="panel-sub">
-                    Total data ditemukan: {{ $logs->total() }}
+                    Total data ditemukan:
+                    <span id="live-log-total">{{ $logs->total() }}</span>
+                </div>
+
+                <div class="panel-sub" style="margin-top: 6px;">
+                    <span class="status-pill-table success">
+                        <span class="d"></span>
+                        Live update aktif
+                    </span>
+
+                    <span style="margin-left: 8px;" id="live-log-updated">
+                        Menunggu update...
+                    </span>
                 </div>
             </div>
 
@@ -170,9 +182,8 @@
                 Page {{ $logs->currentPage() }} dari {{ $logs->lastPage() }}
             </span>
         </div>
-
         @if ($logs->count() > 0)
-            <div class="rows">
+            <div class="rows" id="live-log-rows">
                 <div class="row-head log-head">
                     <div>ID</div>
                     <div>Service</div>
@@ -286,3 +297,158 @@
         @endif
     </div>
 @endsection
+@push('scripts')
+<script>
+    const liveLogUrl = "{{ route('admin.api-logs.live-data') }}";
+    const liveLogRows = document.getElementById('live-log-rows');
+    const liveLogTotal = document.getElementById('live-log-total');
+    const liveLogUpdated = document.getElementById('live-log-updated');
+
+    function getCurrentQueryString() {
+        return window.location.search || '';
+    }
+
+    function escapeHtml(value) {
+        if (value === null || value === undefined) {
+            return '-';
+        }
+
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function buildLogHeader() {
+        return `
+            <div class="row-head log-head">
+                <div>ID</div>
+                <div>Service</div>
+                <div>Endpoint Lokal</div>
+                <div>Target Endpoint</div>
+                <div>Method</div>
+                <div>Status Code</div>
+                <div>Success</div>
+                <div>Created At</div>
+                <div>Aksi</div>
+            </div>
+        `;
+    }
+
+    function buildLogRow(log) {
+        const successBadge = log.is_success
+            ? `
+                <span class="status-pill-table success">
+                    <span class="d"></span>
+                    Success
+                </span>
+            `
+            : `
+                <span class="status-pill-table fail">
+                    <span class="d"></span>
+                    Failed
+                </span>
+            `;
+
+        return `
+            <div class="row-card log-card">
+                <div>
+                    ${escapeHtml(log.id)}
+                </div>
+
+                <div>
+                    <b>${escapeHtml(log.service_name)}</b>
+                </div>
+
+                <div class="mono">
+                    ${escapeHtml(log.local_endpoint)}
+                </div>
+
+                <div class="mono">
+                    ${escapeHtml(log.target_endpoint)}
+                </div>
+
+                <div>
+                    <span class="method-pill ${escapeHtml(log.method_class)}">
+                        ${escapeHtml(log.method)}
+                    </span>
+                </div>
+
+                <div class="mono">
+                    ${escapeHtml(log.status_code)}
+                </div>
+
+                <div>
+                    ${successBadge}
+                </div>
+
+                <div class="mono">
+                    ${escapeHtml(log.created_at)}
+                </div>
+
+                <div>
+                    <a href="${escapeHtml(log.detail_url)}" class="edit-btn">
+                        Detail
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    async function fetchLiveLogs() {
+        if (!liveLogRows) {
+            return;
+        }
+
+        try {
+            const response = await fetch(liveLogUrl + getCurrentQueryString(), {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                return;
+            }
+
+            const logs = result.data.logs || [];
+
+            if (liveLogTotal) {
+                liveLogTotal.textContent = result.data.total;
+            }
+
+            if (liveLogUpdated) {
+                liveLogUpdated.textContent = `Terakhir update: ${result.data.last_updated}`;
+            }
+
+            if (logs.length === 0) {
+                liveLogRows.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-blob">🔍</div>
+                        <div class="empty-title">Belum ada log yang cocok</div>
+                        <div class="empty-sub">
+                            Coba ubah filter atau reset pencarian kamu.
+                        </div>
+                    </div>
+                `;
+
+                return;
+            }
+
+            liveLogRows.innerHTML = buildLogHeader() + logs.map(buildLogRow).join('');
+        } catch (error) {
+            if (liveLogUpdated) {
+                liveLogUpdated.textContent = 'Live update gagal mengambil data.';
+            }
+        }
+    }
+
+    fetchLiveLogs();
+    setInterval(fetchLiveLogs, 5000);
+</script>
+@endpush

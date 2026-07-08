@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Models\ApiConfig;
+use App\Helpers\ApiResponse;
 
 class ApiConfigController extends Controller
 {
@@ -32,11 +33,6 @@ class ApiConfigController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'source' => 'bridging_api',
-            'message' => 'Detail konfigurasi endpoint berhasil diambil',
-            'data' => $config,
-        ], 200);
+        return ApiResponse::fromServiceResult($result);
     }
 }

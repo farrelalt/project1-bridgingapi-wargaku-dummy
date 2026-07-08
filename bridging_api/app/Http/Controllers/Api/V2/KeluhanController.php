@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\MediaCenterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ApiResponse;
 
 class KeluhanController extends Controller
 {
@@ -16,41 +17,7 @@ class KeluhanController extends Controller
         $this->mediaCenter = $mediaCenter;
     }
 
-    public function create(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'judul' => 'required|string',
-            'keluhan' => 'required|string',
-            'kategori_id' => 'nullable',
-            'topik_id' => 'nullable',
-            'kecamatan_id' => 'nullable',
-            'kelurahan_id' => 'nullable',
-            'alamat' => 'nullable|string',
-            'latitude' => 'nullable',
-            'longitude' => 'nullable',
-            'nomor_telepon' => 'nullable|string',
-            'nama' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'source' => 'bridging_api',
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $result = $this->mediaCenter->post(
-            endpoint: '/keluhan_create',
-            data: $validator->validated(),
-            headers: $this->getAuthHeaders($request),
-            serviceName: 'Keluhan Create',
-            localEndpoint: '/api/v2/keluhan/create'
-        );
-
-        return $this->sendResponse($result);
-    }
+    
 
     public function index(Request $request)
     {
@@ -65,6 +32,24 @@ class KeluhanController extends Controller
         return $this->sendResponse($result);
     }
 
+    public function create(Request $request)
+    {
+        $headers = [];
+
+        if ($request->bearerToken()) {
+            $headers['Authorization'] = 'Bearer ' . $request->bearerToken();
+        }
+
+        $result = $this->mediaCenter->post(
+            endpoint: '/keluhan_create',
+            data: $request->all(),
+            headers: $headers,
+            serviceName: 'Keluhan Create',
+            localEndpoint: '/api/v2/keluhan_create'
+        );
+
+        return ApiResponse::fromServiceResult($result);
+    }
     public function detail(Request $request, $id)
     {
         $result = $this->mediaCenter->get(
@@ -141,14 +126,9 @@ class KeluhanController extends Controller
         return $headers;
     }
 
+
     private function sendResponse(array $result)
     {
-        return response()->json([
-            'success' => $result['success'],
-            'source' => 'bridging_api',
-            'target' => 'media_center',
-            'message' => $result['message'],
-            'data' => $result['data'],
-        ], $result['status']);
+      return ApiResponse::fromServiceResult($result);
     }
 }
