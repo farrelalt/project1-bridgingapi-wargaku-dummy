@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Beri Rating</title>
-    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}?v={{ time() }}">
 </head>
 <body>
     <div class="app-shell">

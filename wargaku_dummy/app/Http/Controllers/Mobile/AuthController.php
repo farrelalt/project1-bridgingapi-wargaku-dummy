@@ -80,8 +80,13 @@ class AuthController extends Controller
             'user' => 'required',
             'password' => 'required|min:6',
             'name' => 'required',
-            'nik' => 'nullable',
-            'phone' => 'nullable',
+            'nik' => 'required',
+            'jenis_kelamin' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'alamat' => 'required',
+            'kecamatan_id' => 'required',
+            'kelurahan_id' => 'required',
+            'phone' => 'required',
         ]);
 
         if (config('services.wargaku.mock_mode')) {
@@ -97,6 +102,11 @@ class AuthController extends Controller
                     'password' => $request->password,
                     'name' => $request->name,
                     'nik' => $request->nik,
+                    'jenis_kelamin' => $request->jenis_kelamin,
+                    'tanggal_lahir' => $request->tanggal_lahir,
+                    'alamat' => $request->alamat,
+                    'kecamatan_id' => $request->kecamatan_id,
+                    'kelurahan_id' => $request->kelurahan_id,
                     'phone' => $request->phone,
                 ]);
 
@@ -163,11 +173,17 @@ class AuthController extends Controller
         }
 
         return [
-            'id' => $user['id'] ?? null,
-            'user' => $user['user'] ?? $fallbackUser,
-            'name' => $user['name'] ?? $user['nama'] ?? $fallbackUser,
-            'phone' => $user['phone'] ?? null,
-        ];
+        'id' => $user['id'] ?? null,
+        'user' => $user['user'] ?? $fallbackUser,
+        'name' => $user['name'] ?? $user['nama'] ?? $fallbackUser,
+        'nik' => $user['nik'] ?? null,
+        'jenis_kelamin' => $user['jenis_kelamin'] ?? null,
+        'tanggal_lahir' => $user['tanggal_lahir'] ?? null,
+        'alamat' => $user['alamat'] ?? null,
+        'kecamatan_id' => $user['kecamatan_id'] ?? null,
+        'kelurahan_id' => $user['kelurahan_id'] ?? null,
+        'phone' => $user['phone'] ?? null,
+    ];
     }
 
     private function extractMessage(?array $json, string $fallback): string

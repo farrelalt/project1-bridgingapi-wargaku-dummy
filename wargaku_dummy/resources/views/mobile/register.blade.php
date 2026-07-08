@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>Register Wargaku Dummy</title>
-    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/wargaku.css') }}?v={{ time() }}">
 </head>
 <body>
     <div class="page-center">
-        <div class="auth-card">
+        <div class="auth-card register-card">
             <div class="brand">
                 <div class="brand-logo">W</div>
                 <div>
@@ -55,8 +55,53 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select name="jenis_kelamin" required>
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required>
+                </div>
+
+                <div class="form-group">
                     <label>No HP</label>
                     <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Contoh: 08123456789" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Kecamatan</label>
+                    <select name="kecamatan_id" required>
+                        <option value="">Pilih Kecamatan</option>
+                        <option value="1" {{ old('kecamatan_id') == '1' ? 'selected' : '' }}>Gubeng</option>
+                        <option value="2" {{ old('kecamatan_id') == '2' ? 'selected' : '' }}>Sukolilo</option>
+                        <option value="3" {{ old('kecamatan_id') == '3' ? 'selected' : '' }}>Rungkut</option>
+                        <option value="4" {{ old('kecamatan_id') == '4' ? 'selected' : '' }}>Wonokromo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Kelurahan</label>
+                    <select name="kelurahan_id" required>
+                        <option value="">Pilih Kelurahan</option>
+                        <option value="1" {{ old('kelurahan_id') == '1' ? 'selected' : '' }}>Kertajaya</option>
+                        <option value="2" {{ old('kelurahan_id') == '2' ? 'selected' : '' }}>Mojo</option>
+                        <option value="3" {{ old('kelurahan_id') == '3' ? 'selected' : '' }}>Gebang Putih</option>
+                        <option value="4" {{ old('kelurahan_id') == '4' ? 'selected' : '' }}>Keputih</option>
+                        <option value="5" {{ old('kelurahan_id') == '5' ? 'selected' : '' }}>Rungkut Kidul</option>
+                        <option value="6" {{ old('kelurahan_id') == '6' ? 'selected' : '' }}>Kalirungkut</option>
+                        <option value="7" {{ old('kelurahan_id') == '7' ? 'selected' : '' }}>Wonokromo</option>
+                        <option value="8" {{ old('kelurahan_id') == '8' ? 'selected' : '' }}>Darmo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Alamat</label>
+                    <textarea name="alamat" placeholder="Masukkan alamat lengkap" required>{{ old('alamat') }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Register</button>
