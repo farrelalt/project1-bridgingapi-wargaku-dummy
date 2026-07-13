@@ -187,6 +187,51 @@ class ApiConfigSeeder extends Seeder
                 'is_restricted' => true,
                 'description' => 'Melihat rating keluhan.',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Endpoint Legacy untuk pengujian response mapping
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'service_name' => 'Kategori Legacy Test',
+                'local_endpoint' => '/api/v2/kategori-legacy',
+                'target_endpoint' => '/api/kategori',
+                'method' => 'GET',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Pengujian response mapping kategori mode legacy.',
+                'request_mapping' => null,
+                'response_mapping' => [
+                    'success' => 'status',
+                ],
+                'response_mode' => 'legacy',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Endpoint Legacy untuk request dan response mapping
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'service_name' => 'Keluhan Legacy Test',
+                'local_endpoint' => '/api/v2/keluhan-legacy',
+                'target_endpoint' => '/api/keluhan_create',
+                'method' => 'POST',
+                'status' => 'active',
+                'is_restricted' => false,
+                'description' => 'Pengujian request dan response mapping keluhan mode legacy.',
+                'request_mapping' => [
+                    'pengaduan' => 'keluhan',
+                ],
+                'response_mapping' => [
+                    'success' => 'status',
+                    'keluhan' => 'pengaduan',
+                ],
+                'response_mode' => 'legacy',
+            ],
         ];
 
         foreach ($configs as $config) {
