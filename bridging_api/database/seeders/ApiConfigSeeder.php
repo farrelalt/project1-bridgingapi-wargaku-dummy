@@ -197,7 +197,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Kategori Legacy Test',
                 'local_endpoint' => '/api/v2/kategori-legacy',
-                'target_endpoint' => '/api/kategori',
+                'target_endpoint' => config('services.media_center.endpoints.kategori'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -218,7 +218,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan Legacy Test',
                 'local_endpoint' => '/api/v2/keluhan-legacy',
-                'target_endpoint' => '/api/keluhan_create',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_create'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => false,
