@@ -37,13 +37,14 @@ class MonitoringController extends Controller
             ];
         }
 
-        $mediaCenterBaseUrl = rtrim(env('MEDIA_CENTER_BASE_URL', 'http://127.0.0.1:8002/api'), '/');
+        $mediaCenterCheckUrl = config(
+            'services.media_center.endpoints.kategori');
 
         $mediaCenter = [
             'status' => 'unreachable',
             'is_reachable' => false,
             'reachable' => false,
-            'base_url' => $mediaCenterBaseUrl,
+            'base_url' => $mediaCenterCheckUrl,
             'http_status' => null,
             'message' => 'Media Center belum berhasil dicek',
         ];
@@ -51,7 +52,7 @@ class MonitoringController extends Controller
         try {
             $response = Http::timeout(5)
                 ->acceptJson()
-                ->get($mediaCenterBaseUrl . '/test');
+                ->get($mediaCenterCheckUrl);
 
             $mediaCenterReachable = $response->successful();
 
@@ -59,7 +60,7 @@ class MonitoringController extends Controller
                 'status' => $mediaCenterReachable ? 'reachable' : 'unreachable',
                 'is_reachable' => $mediaCenterReachable,
                 'reachable' => $mediaCenterReachable,
-                'base_url' => $mediaCenterBaseUrl,
+                'base_url' => $mediaCenterCheckUrl,
                 'http_status' => $response->status(),
                 'message' => $mediaCenterReachable
                     ? 'Media Center berhasil dihubungi'
@@ -70,7 +71,7 @@ class MonitoringController extends Controller
                 'status' => 'unreachable',
                 'is_reachable' => false,
                 'reachable' => false,
-                'base_url' => $mediaCenterBaseUrl,
+                'base_url' => $mediaCenterCheckUrl,
                 'http_status' => null,
                 'message' => 'Media Center tidak dapat dihubungi.',
                 'error_detail' => $e->getMessage(),

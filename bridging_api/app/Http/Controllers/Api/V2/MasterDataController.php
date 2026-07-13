@@ -58,8 +58,8 @@ class MasterDataController extends Controller
     public function kelurahan($id_kec)
     {
         $result = $this->mediaCenter->get(
-            endpoint: '/kelurahan/' . $id_kec,
-            query: [],
+            endpoint: '/kelurahan' . $id_kec,
+            query: [ 'id_kec' => $id_kec, ],
             headers: [],
             serviceName: 'Kelurahan',
             localEndpoint: '/api/v2/kelurahan/' . $id_kec

@@ -13,7 +13,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Login',
                 'local_endpoint' => '/api/v2/login',
-                'target_endpoint' => '/api/login',
+                'target_endpoint' => config('services.media_center.endpoints.login'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -22,7 +22,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Register',
                 'local_endpoint' => '/api/v2/register',
-                'target_endpoint' => '/api/register',
+                'target_endpoint' => config('services.media_center.endpoints.register'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -31,7 +31,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Profile',
                 'local_endpoint' => '/api/v2/profile',
-                'target_endpoint' => '/api/profile',
+                'target_endpoint' => config('services.media_center.endpoints.profile'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -41,7 +41,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Kategori',
                 'local_endpoint' => '/api/v2/kategori',
-                'target_endpoint' => '/api/kategori',
+                'target_endpoint' => config('services.media_center.endpoints.kategori'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -50,7 +50,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Chanel',
                 'local_endpoint' => '/api/v2/chanel',
-                'target_endpoint' => '/api/chanel',
+                'target_endpoint' => config('services.media_center.endpoints.chanel'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -59,7 +59,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Kecamatan',
                 'local_endpoint' => '/api/v2/kecamatan',
-                'target_endpoint' => '/api/kecamatan',
+                'target_endpoint' => config('services.media_center.endpoints.kecamatan'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -68,7 +68,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Kelurahan',
                 'local_endpoint' => '/api/v2/kelurahan/{id_kec}',
-                'target_endpoint' => '/api/kelurahan/{id_kec}',
+                'target_endpoint' => config('services.media_center.endpoints.kelurahan'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -77,7 +77,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Topik',
                 'local_endpoint' => '/api/v2/topik',
-                'target_endpoint' => '/api/topik',
+                'target_endpoint' => config('services.media_center.endpoints.topik'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -86,7 +86,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Status',
                 'local_endpoint' => '/api/v2/status',
-                'target_endpoint' => '/api/status',
+                'target_endpoint' => config('services.media_center.endpoints.status'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -95,7 +95,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Instansi',
                 'local_endpoint' => '/api/v2/instansi',
-                'target_endpoint' => '/api/instansi',
+                'target_endpoint' => config('services.media_center.endpoints.instansi'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => false,
@@ -105,7 +105,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan Create',
                 'local_endpoint' => '/api/v2/keluhan/create',
-                'target_endpoint' => '/api/keluhan_create',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_create'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -114,7 +114,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan List',
                 'local_endpoint' => '/api/v2/keluhan',
-                'target_endpoint' => '/api/keluhan',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -123,7 +123,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan Detail',
                 'local_endpoint' => '/api/v2/keluhan/{id}',
-                'target_endpoint' => '/api/keluhan_detail/{id}',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_detail'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -132,16 +132,18 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan Selesai',
                 'local_endpoint' => '/api/v2/keluhan/selesai',
-                'target_endpoint' => '/api/keluhan_selesai',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_selesai'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
                 'description' => 'Menandai keluhan sebagai selesai.',
+                 'request_mapping' => [
+                    'keluhan_id' => 'id_keluhan',],
             ],
             [
                 'service_name' => 'Keluhan Hapus',
                 'local_endpoint' => '/api/v2/keluhan/hapus',
-                'target_endpoint' => '/api/keluhan_hapus',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_hapus'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -151,7 +153,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Tanggapan Create',
                 'local_endpoint' => '/api/v2/tanggapan/create',
-                'target_endpoint' => '/api/tanggapan_create',
+                'target_endpoint' => config('services.media_center.endpoints.tanggapan_create'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -160,7 +162,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Tanggapan List',
                 'local_endpoint' => '/api/v2/tanggapan',
-                'target_endpoint' => '/api/tanggapan',
+                'target_endpoint' => config('services.media_center.endpoints.tanggapan'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -170,7 +172,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'Keluhan Rating',
                 'local_endpoint' => '/api/v2/keluhan/rating',
-                'target_endpoint' => '/api/keluhan_rating',
+                'target_endpoint' => config('services.media_center.endpoints.keluhan_rating'),
                 'method' => 'POST',
                 'status' => 'active',
                 'is_restricted' => true,
@@ -179,7 +181,7 @@ class ApiConfigSeeder extends Seeder
             [
                 'service_name' => 'View Keluhan Rating',
                 'local_endpoint' => '/api/v2/keluhan/rating',
-                'target_endpoint' => '/api/view_keluhan_rating',
+                'target_endpoint' => config('services.media_center.endpoints.view_keluhan_rating'),
                 'method' => 'GET',
                 'status' => 'active',
                 'is_restricted' => true,

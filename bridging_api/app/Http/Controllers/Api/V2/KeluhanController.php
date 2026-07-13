@@ -45,7 +45,7 @@ class KeluhanController extends Controller
             data: $request->all(),
             headers: $headers,
             serviceName: 'Keluhan Create',
-            localEndpoint: '/api/v2/keluhan_create'
+            localEndpoint:'/api/v2/keluhan/create'
         );
 
         return ApiResponse::fromServiceResult($result);

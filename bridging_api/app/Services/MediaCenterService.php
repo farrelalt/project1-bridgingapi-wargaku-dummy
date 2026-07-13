@@ -9,16 +9,19 @@ use Illuminate\Support\Facades\Http;
 
 class MediaCenterService
 {
-    protected string $baseUrl;
+
     protected int $timeout;
     protected DataMappingService $dataMappingService;
     
     public function __construct(DataMappingService $dataMappingService)
-    {
-        $this->dataMappingService = $dataMappingService;
-        $this->baseUrl = rtrim(env('MEDIA_CENTER_BASE_URL', 'http://127.0.0.1:8002/api'), '/');
-        $this->timeout = (int) env('MEDIA_CENTER_TIMEOUT', 10);
-    }
+{
+    $this->dataMappingService = $dataMappingService;
+
+    $this->timeout = (int) config(
+        'services.media_center.timeout',
+        10
+    );
+}
 
     public function post(
         string $endpoint,
@@ -371,24 +374,26 @@ class MediaCenterService
         return '#^/' . implode('/', $segments) . '$#';
     }
 
-    private function buildTargetUrl(string $targetEndpoint): string
-    {
-        $targetEndpoint = trim($targetEndpoint);
+    private function buildTargetUrl(string $targetEndpoint): string{
+    $targetEndpoint = trim($targetEndpoint);
 
-        if (str_starts_with($targetEndpoint, 'http://') || str_starts_with($targetEndpoint, 'https://')) {
-            return $targetEndpoint;
-        }
-
-        $targetEndpoint = '/' . ltrim($targetEndpoint, '/');
-
-        $rootUrl = preg_replace('#/api$#', '', $this->baseUrl);
-
-        if (str_starts_with($targetEndpoint, '/api/')) {
-            return $rootUrl . $targetEndpoint;
-        }
-
-        return $this->baseUrl . $targetEndpoint;
+    if ($targetEndpoint === '') {
+        throw new \RuntimeException(
+            'URL endpoint Media Center belum diisi.'
+        );
     }
+
+    if (
+        !str_starts_with($targetEndpoint, 'http://') &&
+        !str_starts_with($targetEndpoint, 'https://')
+    ) {
+        throw new \RuntimeException(
+            'Target endpoint Media Center harus berupa URL lengkap.'
+        );
+    }
+
+    return $targetEndpoint;
+ }
 
     private function saveLog(
         ?string $serviceName,

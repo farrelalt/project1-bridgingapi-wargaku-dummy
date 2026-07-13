@@ -167,18 +167,9 @@ class CheckRestrictedEndpoint
     }
 
     private function getFullTargetEndpoint(ApiConfig $config): string
-    {
-        $baseUrl = rtrim(env('MEDIA_CENTER_BASE_URL', 'http://127.0.0.1:8002/api'), '/');
-        $rootUrl = preg_replace('#/api$#', '', $baseUrl);
-
-        $target = '/' . ltrim($config->target_endpoint, '/');
-
-        if (str_starts_with($target, '/api/')) {
-            return $rootUrl . $target;
-        }
-
-        return $baseUrl . $target;
-    }
+{
+    return trim($config->target_endpoint);
+}
 
     private function sanitizePayload(mixed $payload): mixed
     {
