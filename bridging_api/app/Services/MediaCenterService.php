@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ApiConfig;
+
 use App\Models\ApiLog;
 use Illuminate\Support\Facades\Http;
 
@@ -10,9 +11,11 @@ class MediaCenterService
 {
     protected string $baseUrl;
     protected int $timeout;
-
-    public function __construct()
+    protected DataMappingService $dataMappingService;
+    
+    public function __construct(DataMappingService $dataMappingService)
     {
+        $this->dataMappingService = $dataMappingService;
         $this->baseUrl = rtrim(env('MEDIA_CENTER_BASE_URL', 'http://127.0.0.1:8002/api'), '/');
         $this->timeout = (int) env('MEDIA_CENTER_TIMEOUT', 10);
     }
@@ -24,6 +27,13 @@ class MediaCenterService
         ?string $serviceName = null,
         ?string $localEndpoint = null
     ): array {
+        $config = $this->findApiConfigForMapping($localEndpoint, 'POST');
+
+        $data = $this->dataMappingService->mapKeys(
+            payload: $data,
+            mapping: $config?->request_mapping
+        );
+
         $targetUrl = $this->resolveTargetUrl(
             fallbackEndpoint: $endpoint,
             method: 'POST',
@@ -44,6 +54,11 @@ class MediaCenterService
                 ];
             }
 
+            $responseData = $this->dataMappingService->mapKeys(
+                payload: $responseData,
+                mapping: $config?->response_mapping
+            );
+
             $result = [
                 'success' => $response->successful(),
                 'status' => $response->status(),
@@ -51,6 +66,7 @@ class MediaCenterService
                     ? 'Request berhasil diteruskan ke Media Center'
                     : 'Request gagal dari Media Center',
                 'data' => $responseData,
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -74,6 +90,7 @@ class MediaCenterService
                 'data' => [
                     'error' => $e->getMessage(),
                 ],
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -99,6 +116,13 @@ class MediaCenterService
         ?string $serviceName = null,
         ?string $localEndpoint = null
     ): array {
+        $config = $this->findApiConfigForMapping($localEndpoint, 'GET');
+
+        $query = $this->dataMappingService->mapKeys(
+            payload: $query,
+            mapping: $config?->request_mapping
+        );
+
         $targetUrl = $this->resolveTargetUrl(
             fallbackEndpoint: $endpoint,
             method: 'GET',
@@ -119,6 +143,11 @@ class MediaCenterService
                 ];
             }
 
+            $responseData = $this->dataMappingService->mapKeys(
+                payload: $responseData,
+                mapping: $config?->response_mapping
+            );
+
             $result = [
                 'success' => $response->successful(),
                 'status' => $response->status(),
@@ -126,6 +155,7 @@ class MediaCenterService
                     ? 'Request berhasil diteruskan ke Media Center'
                     : 'Request gagal dari Media Center',
                 'data' => $responseData,
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -149,6 +179,7 @@ class MediaCenterService
                 'data' => [
                     'error' => $e->getMessage(),
                 ],
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -166,7 +197,8 @@ class MediaCenterService
             return $result;
         }
     }
-        public function forward(
+
+    public function forward(
         string $method,
         string $endpoint,
         array $data = [],
@@ -175,6 +207,13 @@ class MediaCenterService
         ?string $localEndpoint = null
     ): array {
         $method = strtoupper($method);
+
+        $config = $this->findApiConfigForMapping($localEndpoint, $method);
+
+        $data = $this->dataMappingService->mapKeys(
+            payload: $data,
+            mapping: $config?->request_mapping
+        );
 
         $targetUrl = $this->resolveTargetUrl(
             fallbackEndpoint: $endpoint,
@@ -203,6 +242,11 @@ class MediaCenterService
                 ];
             }
 
+            $responseData = $this->dataMappingService->mapKeys(
+                payload: $responseData,
+                mapping: $config?->response_mapping
+            );
+
             $result = [
                 'success' => $response->successful(),
                 'status' => $response->status(),
@@ -210,6 +254,7 @@ class MediaCenterService
                     ? 'Request berhasil diteruskan ke Media Center'
                     : 'Request gagal dari Media Center',
                 'data' => $responseData,
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -233,6 +278,7 @@ class MediaCenterService
                 'data' => [
                     'error' => $e->getMessage(),
                 ],
+                'response_mode' => $config?->response_mode ?? 'standard',
             ];
 
             $this->saveLog(
@@ -398,5 +444,44 @@ class MediaCenterService
         }
 
         return $payload;
+    }
+
+    private function findApiConfigForMapping(?string $localEndpoint, string $method): ?ApiConfig
+    {
+        if (!$localEndpoint) {
+            return null;
+        }
+
+        $localEndpoint = $this->normalizeEndpoint($localEndpoint);
+        $method = strtoupper(trim($method));
+
+        $configs = ApiConfig::query()
+            ->whereRaw('UPPER(TRIM(method)) = ?', [$method])
+            ->get();
+
+        foreach ($configs as $config) {
+            if ($this->normalizeEndpoint($config->local_endpoint) === $localEndpoint) {
+                return $config;
+            }
+        }
+
+        foreach ($configs as $config) {
+            $regex = $this->endpointToRegex($this->normalizeEndpoint($config->local_endpoint));
+
+            if (preg_match($regex, $localEndpoint)) {
+                return $config;
+            }
+        }
+
+        return null;
+    }
+
+    private function normalizeEndpoint(?string $endpoint): string
+    {
+        $endpoint = trim((string) $endpoint);
+        $endpoint = str_replace('\\', '/', $endpoint);
+        $endpoint = preg_replace('#/+#', '/', $endpoint);
+
+        return '/' . trim($endpoint, '/');
     }
 }

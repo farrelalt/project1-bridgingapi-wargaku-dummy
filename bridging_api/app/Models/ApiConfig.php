@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ApiConfig extends Model
@@ -14,10 +14,15 @@ class ApiConfig extends Model
         'status',
         'is_restricted',
         'description',
+        'request_mapping',
+        'response_mapping',
+        'response_mode',
     ];
 
     protected $casts = [
         'is_restricted' => 'boolean',
+        'request_mapping' => 'array',
+        'response_mapping' => 'array',
     ];
 
 }

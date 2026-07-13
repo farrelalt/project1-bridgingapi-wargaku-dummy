@@ -38,13 +38,8 @@
             <div class="filter-grid">
                 <div class="field">
                     <label>Service Name</label>
-                    <input
-                        type="text"
-                        name="service_name"
-                        value="{{ old('service_name') }}"
-                        placeholder="Contoh: Berita List"
-                        required
-                    >
+                    <input type="text" name="service_name" value="{{ old('service_name') }}"
+                        placeholder="Contoh: Berita List" required>
                 </div>
 
                 <div class="field">
@@ -104,33 +99,52 @@
 
                 <div class="field" style="grid-column: span 2;">
                     <label>Local Endpoint</label>
-                    <input
-                        type="text"
-                        name="local_endpoint"
-                        value="{{ old('local_endpoint') }}"
-                        placeholder="Contoh: /api/v2/berita"
-                        required
-                    >
+                    <input type="text" name="local_endpoint" value="{{ old('local_endpoint') }}"
+                        placeholder="Contoh: /api/v2/berita" required>
                 </div>
 
                 <div class="field" style="grid-column: span 2;">
                     <label>Target Endpoint</label>
-                    <input
-                        type="text"
-                        name="target_endpoint"
-                        value="{{ old('target_endpoint') }}"
-                        placeholder="Contoh: /api/berita"
-                        required
-                    >
+                    <input type="text" name="target_endpoint" value="{{ old('target_endpoint') }}"
+                        placeholder="Contoh: /api/berita" required>
                 </div>
 
                 <div class="field" style="grid-column: span 4;">
                     <label>Description</label>
-                    <textarea
-                        name="description"
-                        placeholder="Contoh: Mengambil daftar berita dari Media Center."
-                    >{{ old('description') }}</textarea>
+                    <textarea name="description" placeholder="Contoh: Mengambil daftar berita dari Media Center.">{{ old('description') }}</textarea>
                 </div>
+                <div class="field">
+                    <label>Response Mode</label>
+                    <select name="response_mode" required>
+                        <option value="standard" {{ old('response_mode', 'standard') === 'standard' ? 'selected' : '' }}>
+                            Standard Bridging Response
+                        </option>
+
+                        <option value="legacy" {{ old('response_mode') === 'legacy' ? 'selected' : '' }}>
+                            Legacy Mobile Response
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field" style="grid-column: span 4;">
+                    <label>Request Mapping</label>
+                    <textarea name="request_mapping" placeholder='Contoh: {"pengaduan":"keluhan"}' style="min-height: 120px;">{{ old('request_mapping') }}</textarea>
+
+                    <div class="panel-sub" style="margin-top: 6px;">
+                        Digunakan untuk mengubah request dari Wargaku sebelum dikirim ke Media Center.
+                    </div>
+                </div>
+
+                <div class="field" style="grid-column: span 4;">
+                    <label>Response Mapping</label>
+                    <textarea name="response_mapping" placeholder='Contoh: {"success":"status","keluhan":"pengaduan"}'
+                        style="min-height: 120px;">{{ old('response_mapping') }}</textarea>
+
+                    <div class="panel-sub" style="margin-top: 6px;">
+                        Digunakan untuk mengubah response dari Media Center sebelum dikirim ke Wargaku.
+                    </div>
+                </div>
+
             </div>
 
             <div class="btn-row">

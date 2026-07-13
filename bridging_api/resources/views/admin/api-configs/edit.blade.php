@@ -39,13 +39,8 @@
             <div class="filter-grid">
                 <div class="field">
                     <label>Service Name</label>
-                    <input
-                        type="text"
-                        name="service_name"
-                        value="{{ old('service_name', $config->service_name) }}"
-                        placeholder="Contoh: Login"
-                        required
-                    >
+                    <input type="text" name="service_name" value="{{ old('service_name', $config->service_name) }}"
+                        placeholder="Contoh: Login" required>
                 </div>
 
                 <div class="field">
@@ -84,7 +79,8 @@
                             Inactive
                         </option>
 
-                        <option value="maintenance" {{ old('status', $config->status) === 'maintenance' ? 'selected' : '' }}>
+                        <option value="maintenance"
+                            {{ old('status', $config->status) === 'maintenance' ? 'selected' : '' }}>
                             Maintenance
                         </option>
                     </select>
@@ -93,17 +89,13 @@
                 <div class="field">
                     <label>Restricted</label>
                     <select name="is_restricted" required>
-                        <option
-                            value="0"
-                            {{ old('is_restricted', $config->is_restricted ? '1' : '0') === '0' ? 'selected' : '' }}
-                        >
+                        <option value="0"
+                            {{ old('is_restricted', $config->is_restricted ? '1' : '0') === '0' ? 'selected' : '' }}>
                             No
                         </option>
 
-                        <option
-                            value="1"
-                            {{ old('is_restricted', $config->is_restricted ? '1' : '0') === '1' ? 'selected' : '' }}
-                        >
+                        <option value="1"
+                            {{ old('is_restricted', $config->is_restricted ? '1' : '0') === '1' ? 'selected' : '' }}>
                             Yes
                         </option>
                     </select>
@@ -111,33 +103,56 @@
 
                 <div class="field" style="grid-column: span 2;">
                     <label>Local Endpoint</label>
-                    <input
-                        type="text"
-                        name="local_endpoint"
-                        value="{{ old('local_endpoint', $config->local_endpoint) }}"
-                        placeholder="Contoh: /api/v2/login"
-                        required
-                    >
+                    <input type="text" name="local_endpoint"
+                        value="{{ old('local_endpoint', $config->local_endpoint) }}" placeholder="Contoh: /api/v2/login"
+                        required>
                 </div>
 
                 <div class="field" style="grid-column: span 2;">
                     <label>Target Endpoint</label>
-                    <input
-                        type="text"
-                        name="target_endpoint"
-                        value="{{ old('target_endpoint', $config->target_endpoint) }}"
-                        placeholder="Contoh: /api/login"
-                        required
-                    >
+                    <input type="text" name="target_endpoint"
+                        value="{{ old('target_endpoint', $config->target_endpoint) }}" placeholder="Contoh: /api/login"
+                        required>
                 </div>
 
                 <div class="field" style="grid-column: span 4;">
                     <label>Description</label>
-                    <textarea
-                        name="description"
-                        placeholder="Tambahkan deskripsi endpoint..."
-                    >{{ old('description', $config->description) }}</textarea>
+                    <textarea name="description" placeholder="Tambahkan deskripsi endpoint...">{{ old('description', $config->description) }}</textarea>
                 </div>
+                <div class="field">
+                    <label>Response Mode</label>
+                    <select name="response_mode" required>
+                        <option value="standard"
+                            {{ old('response_mode', $config->response_mode ?? 'standard') === 'standard' ? 'selected' : '' }}>
+                            Standard Bridging Response
+                        </option>
+
+                        <option value="legacy"
+                            {{ old('response_mode', $config->response_mode ?? 'standard') === 'legacy' ? 'selected' : '' }}>
+                            Legacy Mobile Response
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field" style="grid-column: span 4;">
+                    <label>Request Mapping</label>
+                    <textarea name="request_mapping" placeholder='Contoh: {"pengaduan":"keluhan"}' style="min-height: 120px;">{{ old('request_mapping', $config->request_mapping ? json_encode($config->request_mapping, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '') }}</textarea>
+
+                    <div class="panel-sub" style="margin-top: 6px;">
+                        Digunakan untuk mengubah request dari Wargaku sebelum dikirim ke Media Center.
+                    </div>
+                </div>
+
+                <div class="field" style="grid-column: span 4;">
+                    <label>Response Mapping</label>
+                    <textarea name="response_mapping" placeholder='Contoh: {"success":"status","keluhan":"pengaduan"}'
+                        style="min-height: 120px;">{{ old('response_mapping', $config->response_mapping ? json_encode($config->response_mapping, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '') }}</textarea>
+
+                    <div class="panel-sub" style="margin-top: 6px;">
+                        Digunakan untuk mengubah response dari Media Center sebelum dikirim ke Wargaku.
+                    </div>
+                </div>
+
             </div>
 
             <div class="btn-row">

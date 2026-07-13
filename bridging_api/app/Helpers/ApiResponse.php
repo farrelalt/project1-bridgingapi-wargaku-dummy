@@ -56,6 +56,19 @@ class ApiResponse
         );
 
         $data = $result['data'] ?? [];
+        $responseMode = $result['response_mode'] ?? 'standard';
+
+        if ($responseMode === 'legacy') {
+            if (!is_array($data)) {
+                $data = [
+                    'status' => $isSuccess,
+                    'message' => $message,
+                    'data' => $data,
+                ];
+            }
+
+            return response()->json($data, $statusCode);
+        }
 
         if ($isSuccess) {
             return self::success(
@@ -70,7 +83,7 @@ class ApiResponse
             message: $message,
             statusCode: $statusCode,
             data: $data,
-            error: $data['error'] ?? ($result['error'] ?? null),
+            error: is_array($data) ? ($data['error'] ?? ($result['error'] ?? null)) : ($result['error'] ?? null),
             target: $target
         );
     }

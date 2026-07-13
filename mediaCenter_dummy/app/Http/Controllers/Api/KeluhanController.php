@@ -53,7 +53,7 @@ class KeluhanController extends Controller
         }
 
         return response()->json([
-            'success' => true,
+            'success' => 'keluhan sukses diproses',
             'source' => 'dummy_media_center',
             'message' => 'Data keluhan berhasil diambil',
             'data' => $query->latest()->get(),

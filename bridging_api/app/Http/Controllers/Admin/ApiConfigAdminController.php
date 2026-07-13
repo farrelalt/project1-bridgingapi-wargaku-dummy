@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApiConfig;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ApiConfigAdminController extends Controller
 {
@@ -67,6 +68,9 @@ class ApiConfigAdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'request_mapping' => ['nullable', 'string'],
+            'response_mapping' => ['nullable', 'string'],
+            'response_mode' => ['required', 'in:standard,legacy'],
             'service_name' => ['required', 'string', 'max:255'],
             'local_endpoint' => [
                 'required',
@@ -95,6 +99,17 @@ class ApiConfigAdminController extends Controller
         $validated['method'] = strtoupper($validated['method']);
         $validated['local_endpoint'] = '/' . trim($validated['local_endpoint'], '/');
         $validated['target_endpoint'] = '/' . trim($validated['target_endpoint'], '/');
+        $validated['request_mapping'] = $this->decodeMappingInput(
+            value: $request->input('request_mapping'),
+            field: 'request_mapping'
+        );
+
+        $validated['response_mapping'] = $this->decodeMappingInput(
+            value: $request->input('response_mapping'),
+            field: 'response_mapping'
+        );
+
+        $validated['response_mode'] = $validated['response_mode'] ?? 'standard';
 
         ApiConfig::create($validated);
 
@@ -117,6 +132,9 @@ class ApiConfigAdminController extends Controller
             $config = ApiConfig::findOrFail($id);
 
             $validated = $request->validate([
+                'request_mapping' => ['nullable', 'string'],
+                'response_mapping' => ['nullable', 'string'],
+                'response_mode' => ['required', 'in:standard,legacy'],
                 'service_name' => ['required', 'string', 'max:255'],
                 'local_endpoint' => [
                     'required',
@@ -148,6 +166,17 @@ class ApiConfigAdminController extends Controller
             $validated['method'] = strtoupper(trim($validated['method']));
             $validated['local_endpoint'] = $this->normalizeEndpointInput($validated['local_endpoint']);
             $validated['target_endpoint'] = $this->normalizeEndpointInput($validated['target_endpoint']);
+            $validated['request_mapping'] = $this->decodeMappingInput(
+                value: $request->input('request_mapping'),
+                field: 'request_mapping'
+            );
+
+            $validated['response_mapping'] = $this->decodeMappingInput(
+                value: $request->input('response_mapping'),
+                field: 'response_mapping'
+            );
+
+            $validated['response_mode'] = $validated['response_mode'] ?? 'standard';
 
             $config->update($validated);
 
@@ -169,7 +198,22 @@ class ApiConfigAdminController extends Controller
                 ->route('admin.api-configs.index')
                 ->with('success', "Endpoint {$serviceName} ({$localEndpoint}) berhasil dihapus.");
         }
+        private function decodeMappingInput(?string $value, string $field): ?array
+        {
+            if ($value === null || trim($value) === '') {
+                return null;
+            }
 
+            $decoded = json_decode($value, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+                throw ValidationException::withMessages([
+                    $field => 'Format mapping harus berupa JSON object yang valid. Contoh: {"success":"status"}',
+                ]);
+            }
+
+            return $decoded;
+        }
     private function normalizeEndpointInput(string $endpoint): string
         {
             $endpoint = trim($endpoint);
